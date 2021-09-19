@@ -6,7 +6,7 @@ googleAnalytics: ''
 disqusShortname: ''
 params:
   banner:
-    buttonText: Me and my works
+    buttonText: My works
     subtitle: |-
       Here you can find all my Data Ananalysis works done till this moment. You will see line codes, graphs and a description of the what the plot is trying to tell us.
     title: Welcome, this is Massimiliano Ursig's website
@@ -101,8 +101,8 @@ params:
         url: blogs/ipsum
       - image: pexels-lukas-590041.jpg
         subtitle: Business Application
-        title: LBS work 4 (Group assignment)
-        url: blogs/ipsum
+        title: LBS work 4 (Group assignment)      #perchè non va?
+        url: projects/homework1
   two:
     buttonText: Get Started
     enable: yes
