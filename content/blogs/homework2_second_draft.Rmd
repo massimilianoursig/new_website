@@ -11,7 +11,7 @@ draft: false
 image: pawel-czerwinski-6lQDFGOB1iw-unsplash.jpg
 keywords: ""
 slug: pane
-title: Pane
+title: LBS 2
 ---
 
 
