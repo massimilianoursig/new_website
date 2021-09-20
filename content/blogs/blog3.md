@@ -11,5 +11,5 @@ draft: false
 image: mathew-schwartz-sb7RUrRMaC4-unsplash.jpg
 keywords: ""
 slug: tempus
-title: Tempus
+title: LBS 2
 ---

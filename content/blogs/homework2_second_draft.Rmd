@@ -1,4 +1,5 @@
 ---
+categories:
 - ""
 - ""
 date: "2017-10-31T22:42:51-05:00"
@@ -9,8 +10,8 @@ description: Nullam et orci eu lorem consequat tincidunt vivamus et sagittis mag
 draft: false
 image: pawel-czerwinski-6lQDFGOB1iw-unsplash.jpg
 keywords: ""
-slug: massimiliano
-title: Session 4: Homework 2
+slug: pane
+title: Pane
 ---
 
 

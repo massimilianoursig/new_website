@@ -8,5 +8,5 @@ draft: false
 image: marialaura-gionfriddo-mZ8TPycWmHo-unsplash.jpg
 keywords: ""
 slug: magna
-title: Magna
+title: LBS 3
 ---
