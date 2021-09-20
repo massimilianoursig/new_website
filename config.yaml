@@ -70,25 +70,27 @@ params:
       - name: Blogs
         url: blogs
       - name: Entrepreneurship
-        url: blogs/ipsum
-      - name: CV
+        url: blogs/impresa
+      - name: Probabile CV
         url: elements.html
+      - name: CV
+        url: blogs/cv 
     menu: Menu
 #    subtitle: By HTML5 Up
     title: Home
   tiles:
     enable: yes
     showcase:
-      - image: franki-chamaki-1K6IQsQbizI-unsplash.jpg
+      - image: robert-v-ruggiero-FLMdXg-6rJo-unsplash.jpg
         subtitle: Brief Biography
         title: Who am I?
         url: blogs/aliquam
-      - image: pexels-lukas-590041.jpg
+      - image: pexels-ivan-bertolazzi-2681319.jpg
 #        subtitle: Brief Biography
         title: CV
         url: blogs/tempus
-      - image: szabolcs-toth-MMdYohbcJSk-unsplash.jpg
-        subtitle: Start
+      - image: franki-chamaki-1K6IQsQbizI-unsplash.jpg
+#        subtitle: Start
         title: LBS work 1
         url: blogs/max
       - image: hunter-harritt-Ype9sdOPdYc-unsplash.jpg
