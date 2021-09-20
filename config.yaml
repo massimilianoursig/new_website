@@ -61,9 +61,9 @@ params:
     button1:
       - name: Let's take a look
         url: blogs
-    button2:
-      - name: Sign In
-        url: '#'
+#    button2:
+#      - name: Sign In
+#        url: '#'
     links:
       - name: Home
         url: '#'
@@ -71,8 +71,8 @@ params:
         url: blogs
       - name: Entrepreneurship
         url: blogs/impresa
-      - name: Elements
-        url: elements.html
+#      - name: Elements
+#        url: elements.html
       - name: CV
         url: blogs/cv 
     menu: Menu
@@ -106,7 +106,7 @@ params:
         title: LBS work 4
         url: blogs/ipsum
   two:
-    buttonText: Get Started
+    buttonText: Let's take a look
     enable: yes
     showcase:
       - image: pexels-ivan-bertolazzi-2681319.jpg
