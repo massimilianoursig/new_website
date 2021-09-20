@@ -90,15 +90,15 @@ params:
       - image: szabolcs-toth-MMdYohbcJSk-unsplash.jpg
         subtitle: LBS work 1
         title: LBS work 1
-        url: blogs/magna
+        url: blogs/max
       - image: hunter-harritt-Ype9sdOPdYc-unsplash.jpg
 #        subtitle: Nisl Sed Aliquam
         title: LBS work 2
-        url: blogs/ipsum
+        url: blogs/pane
       - image: pierre-chatel-innocenti-pxoZSTdAzeU-unsplash.jpg
         subtitle: It's easier for everyone
         title: LBS work 3
-        url: blogs/pane
+        url: blogs/massi
       - image: pexels-lukas-590041.jpg
         subtitle: Business Application
         title: LBS work 4 (Group assignment)      #perchè non va?

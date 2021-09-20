@@ -21,8 +21,6 @@ library(here)
 library(janitor)
 ```
 
-The goal is to test your software installation, to demonstrate competency in Markdown, and in the basics of `ggplot`.
-
 
 # Biography
 
@@ -317,17 +315,3 @@ base_plot + stat_ecdf(geom = "step", pad = FALSE) +
 
 ```
 
-Which of these four graphs do you think best communicates the variability of the `incident_notional_cost` values? Also, can you please tell some sort of story (which animals are more expensive to rescue than others, the spread of values) and speculate about the differences in the patterns.
-
-
-# Submit the assignment
-
-Knit the completed R Markdown file as an HTML document (use the "Knit" button at the top of the script editor window) and upload it to Canvas.
-
-## Details
-
-If you want to, please answer the following
-
--   Who did you collaborate with: TYPE NAMES HERE
--   Approximately how much time did you spend on this problem set: ANSWER HERE
--   What, if anything, gave you the most trouble: ANSWER HERE

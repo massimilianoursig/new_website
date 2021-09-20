@@ -11,7 +11,7 @@ draft: false
 image: pawel-czerwinski-6lQDFGOB1iw-unsplash.jpg
 keywords: ""
 slug: pane
-title: LBS 2
+title: LBS work 2
 ---
 
 
@@ -970,31 +970,3 @@ calculated between 2016-2019",
 Should you use the mean or the median to calculate your expected rentals? Why?\n
 Generally speaking, expected values are computed by using the mean. The mean takes into account all values, even outliers, and therefore provides a good estimation of future values. The median also takes into account all values, but chooses the middle value, which might not accurately present future data. \n
 Just in very skewed distributions, it might make sense to use the median to prevent outliers from skewing data, but I believe in this case the mean should be the most precise metrics. Furthermore, those two graphs were using the average, we used the same in order to properly replicate the graph. 
-
-In creating your plots, you may find these links useful:
-
-- https://ggplot2.tidyverse.org/reference/geom_ribbon.html
-- https://ggplot2.tidyverse.org/reference/geom_tile.html 
-- https://ggplot2.tidyverse.org/reference/geom_rug.html
-
-# Deliverables
-
-As usual, there is a lot of explanatory text, comments, etc. You do not need these, so delete them and produce a stand-alone document that you could share with someone. Knit the edited and completed R Markdown file as an HTML document (use the "Knit" button at the top of the script editor window) and upload it to Canvas.
-
-# Details
-
-- Who did you collaborate with: Jiangxia Yu; Marianna Taki; Yuting Wu; Ferdinand Wohlenberg; Massimiliano Ursig; Tanisha Yadav
-- Approximately how much time did you spend on this problem set: ANSWER HERE
-- What, if anything, gave you the most trouble: ANSWER HERE
-
-**Please seek out help when you need it,** and remember the [15-minute rule](https://mam202.netlify.app/syllabus/#the-15-minute-rule){target=_blank}. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack-- and remember that I am here to help too!  
-
-> As a true test to yourself, do you understand the code you submitted and are you able to explain it to someone else? 
-
-# Rubric
-
-Check minus (1/5): Displays minimal effort. Doesn't complete all components. Code is poorly written and not documented. Uses the same type of plot for each graph, or doesn't use plots appropriate for the variables being analyzed. 
-
-Check (3/5): Solid effort. Hits all the elements. No clear mistakes. Easy to follow (both the code and the output). 
-
-Check plus (5/5): Finished all components of the assignment correctly and addressed both challenges. Code is well-documented (both self-documented and with additional comments as necessary). Used tidyverse, instead of base R. Graphs and tables are properly labelled. Analysis is clear and easy to follow, either because graphs are labeled clearly or you've written additional text to describe how you interpret the output.

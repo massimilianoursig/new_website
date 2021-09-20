@@ -1,14 +1,17 @@
 ---
-title: "LBS 1"
-date: '2017-10-31T22:26:09-05:00'
-description: Lorem Etiam Nullam
-draft: no
-image: marialaura-gionfriddo-mZ8TPycWmHo-unsplash.jpg
-keywords: ''
-slug: magna
 categories:
-- ''
-- ''
+- ""
+- ""
+date: "2017-10-31T22:42:51-05:00"
+description: Nullam et orci eu lorem consequat tincidunt vivamus et sagittis magna
+  sed nunc rhoncus condimentum sem. In efficitur ligula tate urna. Maecenas massa
+  sed magna lacinia magna pellentesque lorem ipsum dolor. Nullam et orci eu lorem
+  consequat tincidunt. Vivamus et sagittis tempus.
+draft: false
+image: pawel-czerwinski-6lQDFGOB1iw-unsplash.jpg
+keywords: ""
+slug: max
+title: LBS work 1
 ---
 
 ```{r, setup, echo=FALSE}
