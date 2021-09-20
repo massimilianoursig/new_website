@@ -1,15 +1,14 @@
 ---
-title: "Session 2: Homework 1"
-author: "Study Group 1: Jiangxia Yu; Marianna Taki; Yuting Wu; Ferdinand Wohlenberg; Massimiliano Ursig; Tanisha Yadav"
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    theme: flatly
-    highlight: zenburn
-    number_sections: yes
-    toc: yes
-    toc_float: yes
-    code_folding: show
+title: "LBS 1"
+date: '2017-10-31T22:26:09-05:00'
+description: Lorem Etiam Nullam
+draft: no
+image: marialaura-gionfriddo-mZ8TPycWmHo-unsplash.jpg
+keywords: ''
+slug: magna
+categories:
+- ''
+- ''
 ---
 
 ```{r, setup, echo=FALSE}
@@ -135,7 +134,7 @@ We will look at a subset sample of movies, taken from the [Kaggle IMDB 5000 movi
 
 ```{r load_movies, warning=FALSE, message=FALSE}
 
-movies <- read_csv(here::here("movies.csv"))
+movies <- read_csv(here::here("data","movies.csv"))
 glimpse(movies)
 
 ```
@@ -312,7 +311,7 @@ We will use the `tidyquant` package to download historical data of stock prices,
 We must first identify which stocks we want to download data for, and for this we must know their ticker symbol; Apple is known as AAPL, Microsoft as MSFT, McDonald's as MCD, etc. The file `nyse.csv` contains 508 stocks listed on the NYSE, their ticker `symbol`, `name`, the IPO (Initial Public Offering) year, and the sector and industry the company is in.
 
 ```{r load_nyse_data, message=FALSE, warning=FALSE}
-nyse <- read_csv(here::here("nyse.csv"))
+nyse <- read_csv(here::here("data","nyse.csv"))
 ```
 
 Based on this dataset, create a table and a bar plot that shows the number of companies per sector, in descending order
@@ -458,7 +457,7 @@ First let us load the data
 
 ```{r load HR data}
 
-hr_dataset <- read_csv(here::here("datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv"))
+hr_dataset <- read_csv(here::here("data","datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv"))
 glimpse(hr_dataset)
 
 ```
@@ -786,7 +785,7 @@ vaccinations <- vroom(cdc_url) %>%
 
 # Download County Presidential Election Returns
 # https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ
-election2020_results <- vroom("countypres_2000-2020.csv") %>% 
+election2020_results <- vroom("data","countypres_2000-2020.csv") %>% 
   janitor::clean_names() %>% 
   
   # just keep the results for the 2020 election
