@@ -14,7 +14,8 @@ slug: impresa
 title: Entrepreneurship
 ---
 
-**Why Now Is The Time For Entrepreneurship** *by Forbes*
+# Why Now Is The Time For Entrepreneurship 
+*by Forbes*
 
 The saying “necessity is the mother of invention” rings truer now than ever before. The world is in the middle of a global pandemic. Unemployment is at an all-time high. And according to experts, nearly 7.5 million small businesses may be forced to close permanently over the next several months. But many believe that black-swan events such as pandemics and recessions fuel the next wave of innovation.
 
@@ -26,19 +27,19 @@ This uncertain climate just might be the push that aspiring entrepreneurs need t
 
 Here is some advice for those who are seeking new opportunities this year and think entrepreneurship might be the answer.
 
-**Look for answers in nonobvious places.**
+## **Look for answers in nonobvious places.**
 
 I am a nontechnical CEO with a background in PR, marketing and e-commerce. I run a software company with more than 50 engineers who create a technical product for developers. Fostering diversity of thought is important, from your customer base to your employees. For example, my team consists of engineers who excel in sales leadership positions and former lawyers in nonlegal roles. We even have an astrophysicist on the marketing team. Surround yourself with individuals who will give you conflicting perspectives. Consider every bit of customer feedback because it might uncover the next product update or service. 
 
-**Mentors are a must, and don’t forget to pay it forward.**
+## **Mentors are a must, and don’t forget to pay it forward.**
 
 Mentorship is about giving someone the gift of your time and your knowledge. I consider myself incredibly lucky to have had several great mentors throughout my career. They are an essential part of my success and have guided me through many pivotal moments. But never get so busy that you forget to share the gift of knowledge around you. Think of the small things you can do for others that might make a significant impact on the trajectory of their business, whether offering guidance on investor decks, helping to develop hiring strategies or making key introductions that will open doors. 
 
-**Think about what you can give.**
+## **Think about what you can give.**
 
 Some of the best life advice I’ve ever received was from an entrepreneur whose work I very much admire. This person has made an immeasurable impact on his community and the millions of people who have worked with him throughout his storied career. He told me, “Don’t think about what you can get from someone or something. Think about what you can give.” This mentality has become the cornerstone of how I live and run my life: my family, friendships and companies. Not only has this thinking positively affected each of those areas, but it’s benefited my community and the broader world. 
 
-**Have a plan, but don’t be afraid to pivot.**
+#**Have a plan, but don’t be afraid to pivot.**
 
 The entrepreneurs who are nimble and inventive are the ones who will survive, especially in the current climate. So, while your business plan is important, don’t let it be your barrier to success. One salient example of this is my first experience with fundraising. My company was seeking a series A round. Even though we had early customer traction, the company was viewed as young and unproven. Several reputable VC firms advised me to get more traction and then return to fundraise. We shifted our strategy by securing a seed round of funding to give us the needed runway and then focused on increasing traction within the market. We came back one year later and secured a significant series A round with remarkable investors. 
 

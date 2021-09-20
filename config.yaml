@@ -71,7 +71,7 @@ params:
         url: blogs
       - name: Entrepreneurship
         url: blogs/impresa
-      - name: Probabile CV
+      - name: Elements
         url: elements.html
       - name: CV
         url: blogs/cv 
@@ -118,4 +118,3 @@ params:
 #      amet pharetra et feugiat tempus."
     title: Keep in touch, evolve your interest 
     url: blogs
-    
