@@ -102,7 +102,7 @@ params:
       - image: pexels-lukas-590041.jpg
         subtitle: Business Application
         title: LBS work 4 (Group assignment)      #perchè non va?
-        url: projects/homework1
+        url: blogs/massimiliano
   two:
     buttonText: Get Started
     enable: yes
@@ -115,5 +115,5 @@ params:
 #      Vivamus et sagittis libero.\r\n    Mauris aliquet magna magna sed nunc rhoncus
 #      amet pharetra et feugiat tempus."
     title: Keep in touch, evolve your interest 
-    url: blogs
+    url: blogs/massimiliano
     

@@ -1,0 +1,959 @@
+---
+title: "Session 6: Homework 3"
+author: "Study Group 1: Jiangxia Yu; Marianna Taki; Yuting Wu; Ferdinand Wohlenberg; Massimiliano Ursig; Tanisha Yadav"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+```{r load-libraries, echo=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+```
+
+# Youth Risk Behavior Surveillance
+
+Every two years, the Centers for Disease Control and Prevention conduct
+the [Youth Risk Behavior Surveillance System
+(YRBSS)](https://www.cdc.gov/healthyyouth/data/yrbs/index.htm) survey,
+where it takes data from high schoolers (9th through 12th grade), to
+analyze health patterns.
+
+## Load the data
+
+```{r load and glimpse data}
+data(yrbss)
+glimpse(yrbss)
+```
+
+We use skim to get a feeling for missing values, summary
+statistics of numerical variables, and a very rough histogram.
+
+```{r skim the data}
+skim(yrbss)
+```
+
+As we can see from skimming there are some missing values but this is
+only a small percentage of the total observations for most of the
+variables that we have so it is not of much worry. The variable "race"
+has the most missing values with about 20% of observations missing. This
+could be quite significant and we may want to look more into it.
+
+## Exploratory Data Analysis
+
+We will first start with analyzing the `weight` of participants in kilograms. Using visualization and summary statistics, we describe the distribution of weights. 
+
+```{r eda_on_weight}
+weight_distribution<-yrbss %>% 
+  select(weight) %>%
+  filter(!is.na(weight)) %>%
+  summarise(average_weight=mean(weight),
+            median_weight=median(weight),
+            sd_weight=sd(weight),
+            min_weight=min(weight),
+            max_weight=max(weight)) 
+
+weight_distribution %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+yrbss %>%
+  ggplot(aes(x=weight))+
+  geom_density()+
+  labs(
+    title = "Distribution of weight among High School students",
+    x = "Weight",
+    y = "Density"
+  )
+```
+
+From the 'skim' function we can see that we are missing 1004 observations for the weight variable. This is about 8% of the total observations.
+
+By looking at the histogram, we can visualize a right skewed distribution for the variable 'weight'. Thus, there are some extreme weight values creating a tail in the distribution. This can further be observed by the summary statistics as the mean weight of a high schooler is 67.9 kg (3 sf) which is larger than the median 64.4 kg (3sf). This is a typical characteristic of a right skewed (positive) distribution since the mean is affected by extreme values. The max weight of 181 kg (3sf) gives us a sense of the extreme values that are causing the skew.  
+  
+  
+Next, we consider the possible relationship between a high schooler’s weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
+
+```{r plot for weight and physical activity}
+
+weight_physical_activity<-yrbss %>%
+  filter(!is.na(physically_active_7d)) %>%
+  mutate(physically_active_7d=factor(physically_active_7d,
+                                     order=TRUE,
+                                     levels=seq(0,7,1)))
+
+
+weight_physical_activity %>%
+  ggplot(aes(x=physically_active_7d,
+             y=weight))+
+  geom_boxplot()+
+  labs(title='Physical activity levels with weight box plots',
+       x='Level of physical activity',
+       y='Weight')+
+  NULL
+
+```
+The expectation for the box plot above would be that students who exercise more have a lower weight as they will be following a more healthy lifestyle. However, as seen by the box plots, the weight distributions across activity levels seem to be similar. They also have similar spreads.  
+    
+    
+We create a new variable in the dataframe `yrbss`, called `physical_3plus` , which will be `yes` if they are physically active for at least 3 days a week, and `no` otherwise. We also want to calculate the number and % of those who are and are not active for more than 3 days. We compare the use of the `count()` function and see if we get the same results as `group_by()... summarise()`.    
+
+```{r physically active more than 3 days}
+yrbss <- yrbss %>% 
+  mutate(physical_3plus=if_else(physically_active_7d>=3,"yes","no"))
+
+#Using group_by and summarise to calculate percentages
+proportion_physical_3plus<-yrbss %>%
+  filter(!is.na(physical_3plus)) %>%
+  group_by(physical_3plus) %>% 
+  summarise(count=n()) %>%
+  mutate(proportion=count/sum(count),
+         percentage=proportion*100) 
+            
+proportion_physical_3plus %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+
+
+#using count function
+proportion_physical_3plus_count <- yrbss %>%
+  filter(!is.na(physical_3plus)) %>%
+  count(physical_3plus=="yes") %>%
+  mutate(
+    proportion = n/sum(n),
+    percentage=proportion*100
+  ) %>%
+  rename(count = n)
+ 
+proportion_physical_3plus_count %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+```
+The same result (proportion) is obtained using the count() function and the summarise(), group_by() functions.  
+Both calculation methods show us that about 67% of all high school students are physically active at least 3 days a week.
+  
+95% confidence interval for the population proportion of high schools that are *NOT* active 3 or more days per week:
+```{r confidence interval for not active}
+library(infer)
+set.seed(938)
+
+confidence_interval_notactive<-yrbss %>%
+  filter(!is.na(physical_3plus)) %>%
+  specify(response=physical_3plus,
+          success="no") %>%
+  generate(reps=1000,type="bootstrap") %>%
+  calculate(stat="prop")
+
+bootstrap_ci <- confidence_interval_notactive %>%
+  get_ci(level=0.95, type="percentile")
+
+bootstrap_ci %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+```
+We obtain a confidence interval of [0.323,0.339] (3 sf) for the proportion of high schoolers who are not physically active using a bootstrap simulation.  
+  
+Create a boxplot of `physical_3plus` vs. `weight` to check if there is any relationship
+between these two variables.
+
+```{r boxplot physical_3plus vs. weight}
+yrbss %>% 
+  filter(!is.na(physical_3plus)) %>%
+  ggplot(aes(x=physical_3plus,
+             y=weight))+
+  geom_boxplot()+
+  labs(
+    title = "The relationship between weight and physical activity (3+ per week) among High School students",
+    x = "Physical activity (3+ per week)",
+    y = "Weight (kg)"
+  )+
+  theme(
+    plot.title = element_text(size = 10)
+  )
+```
+From the boxplots above, it seems that the spread of values, medians, as well as quartiles are similar for high school students active 3 or more days a week and those who are active less than 3 days a week. The median weight for those who are more active is slightly higher, the same with the range of values in general. This is somewhat unexpected as usually more physically active people are associated with a more healthy lifestyle and thus less obesity. However, this can greatly range with gender. Maybe it is the case that more males exercise and that is why their weight is higher. We need to explore more characteristics of our sample to be able to conclude whether these two are related.  
+  
+## Confidence Interval
+
+Boxplots show how the medians of the two distributions compare, but we
+can also compare the means of the distributions using either a
+confidence interval or a hypothesis test.
+
+```{r ci_using_formulas}
+
+confidence_interval_notactive<-yrbss %>%
+  filter(!is.na(physical_3plus)) %>%
+  group_by(physical_3plus) %>%
+  summarise(mean_weight=mean(weight,na.rm = TRUE),
+            sd_weight=sd(weight,na.rm = TRUE),
+            total=n(),
+            se=sd_weight/sqrt(total),
+            t_critical=qt(0.975,total-1),
+            lower_ci=mean_weight-(t_critical*se),
+            upper_ci=mean_weight+(t_critical*se))
+
+confidence_interval_notactive %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+```
+
+There is an observed difference of about 1.7kg (68.4 - 66.7), between weights of students physically active more than 3 days a week and not. We notice that the two confidence intervals do not overlap, this means that the average weight is significantly different. Let us also conduct a hypothesis test.  
+  
+## Hypothesis test with formula
+    
+$H_0: \mu_{male}-\mu_{female}= 0$ vs
+$H_1: \mu_{male}-\mu_{female}\neq 0$
+
+```{r t_test_using_R weight vs. physical_3plus}
+
+t.test(weight ~ physical_3plus, data = yrbss)
+```
+
+The hypothesis test confirms our previous findings. The p-value is below 1%, and therefore below the threshold of 5% what we aim for in order to reject the null hypothesis of differences in mean weight being equal to 0. Consequently, we can say the mean weight between the two groups is indeed significantly different. 
+    
+## Hypothesis test with `infer`
+    
+Next, we will introduce a new function, `hypothesize`, that falls into
+the infer workflow. We will use this method for conducting hypothesis
+tests.
+
+But first, we need to initialize the test, which we will save as `obs_diff`.
+
+```{r calc_obs_difference}
+obs_diff <- yrbss %>%
+  specify(weight ~ physical_3plus) %>%
+  calculate(stat = "diff in means", order = c("yes", "no"))
+
+```
+
+We can now simulate the test on the null distribution, which we will save as null.
+
+```{r hypothesis_testing_using_infer_package}
+
+null_dist <- yrbss %>%
+  # specify variables
+  specify(weight ~ physical_3plus) %>%
+  
+  # assume independence, i.e, there is no difference
+  hypothesize(null = "independence") %>%
+  
+  # generate 1000 reps, of type "permute"
+  generate(reps = 1000, type = "permute") %>%
+  
+  # calculate statistic of difference, namely "diff in means"
+  calculate(stat = "diff in means", order = c("yes", "no"))
+
+```
+
+We can visualize this null distribution with the following code:
+
+```{r visualize null distribution for difference in mean weight between physically active and non-active}
+ggplot(data = null_dist, aes(x = stat)) +
+  geom_histogram()+
+  labs(
+    title= "Differences in mean weight between physically active and non-active students",
+    x="Difference in mean weight (in kg)"
+  )+
+  theme(
+    plot.title = element_text(size = 12)
+  )
+
+```
+
+Now that the test is initialized and the null distribution formed, we
+can visualize to see how many of these null permutations have a
+difference of at least `obs_stat` of
+`r obs_diff %>% pull() %>% round(2)`.
+
+We can also calculate the p-value for your hypothesis test using the
+function `infer::get_p_value()`.
+
+```{r compare normal distribution and observed difference}
+
+null_dist %>% visualize() +
+  shade_p_value(obs_stat = obs_diff, direction = "two-sided")+
+  labs(
+    title = "Simulation based Null-Distribution of differences in mean weight
+between physically active and non-active students",
+     x="Difference in mean weight (in kg)" 
+  )+
+  theme(
+    plot.title = element_text(size = 12)
+  )
+
+null_dist %>%
+  get_p_value(obs_stat = obs_diff, direction = "two_sided") %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+```
+In the graph displaying the null distribution, as well as the observed difference, we can see that not a single generated sample has an observed difference as high as the sample data. Therefore, it can be assumed that there this a significant difference in the average weight of physically active and non-active people. This is then confirmed again by a p-value = 0, thus rejecting the null hypothesis that the difference in average weight is 0.  
+  
+This the standard workflow for performing hypothesis tests.
+    
+# IMDB ratings: Differences between directors
+
+We will explore whether the mean IMDB rating for Steven Spielberg and Tim Burton are the same or
+not. We reproduce the following graph to analyse any overlap in the 95% confidence intervals.
+
+```{r directors, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "directors.png"), error = FALSE)
+imdb_movies<-read_csv(here::here("data","movies.csv"))
+
+glimpse(imdb_movies)
+```
+    
+Reproduced graph:
+```{r plot mean and confidence interval, fig.width = 12, fig.height = 8}
+#Prepare data and calculate confidence intervals
+imdb_spielberg_burton <- imdb_movies %>%
+  filter(director %in% c("Steven Spielberg", "Tim Burton" )) %>%
+  group_by(director) %>%
+  summarize(
+    average_rating = mean(rating),
+    sd_rating = sd(rating),
+    count_movies = n(),
+    t_critical = qt(0.975, count_movies-1),
+    se = sd_rating/sqrt(count_movies),
+    lower_ci = average_rating - t_critical*se,
+    upper_ci = average_rating + t_critical*se
+  )
+
+ggplot(imdb_spielberg_burton, aes(x=average_rating, 
+                                  y=director, 
+                                  color=director)) +
+  geom_point(size = 8)+
+  geom_errorbarh(aes(xmax = upper_ci, 
+                     xmin = lower_ci), 
+                 height = 0.1, 
+                 size=2)+
+  annotate(geom = "rect", 
+           xmin = 7.275, 
+           xmax = 7.33, 
+           ymin = -Inf, 
+           ymax = Inf, 
+           fill = "grey", 
+           alpha=0.7)+
+  scale_y_discrete(limits = c("Tim Burton","Steven Spielberg"))+
+  theme_bw()+
+  labs(
+    title = "Do Spielberg and Burton have the same mean IMdB ratings?",
+    subtitle = "95% confidence intervals overlap",
+    x = "Mean IMdB Rating",
+  )+
+  geom_text(aes(label = round(average_rating,2)), 
+            size = 7, 
+            vjust = -2, 
+            color = "black", 
+            fontface = "bold")+
+  geom_text(aes(label = round(lower_ci,2)), 
+            size = 6, 
+            vjust = -3,
+            x = imdb_spielberg_burton$lower_ci,
+            color = "black", 
+            fontface = "bold")+
+  geom_text(aes(label = round(upper_ci,2)), 
+            size = 6, 
+            vjust = -3,
+            x = imdb_spielberg_burton$upper_ci,
+            color = "black", 
+            fontface = "bold")+
+  theme(legend.position="none",
+        plot.title = element_text(face = "bold", size = 18),
+        plot.subtitle = element_text(size = 14, face = "bold"),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.y = element_text(size = 14),
+        axis.text.x = element_text(size = 12)
+        )
+```
+From the graph we can see that 95% confidence intervals for average IMdB ratings for Spielberg and Burton overlap.  
+  
+In addition, we will run a hypothesis test:       
+    
+$H_0: \mu_{Steven Spielberg}-\mu_{Tim Burton}= 0$ vs
+$H_1: \mu_{Steven Spielberg}-\mu_{Tim Burton}\neq 0$
+    
+```{r hypothesis test for directors}
+director_data<- imdb_movies %>% 
+  select(rating,director,title) %>%
+  filter(director %in% c("Steven Spielberg","Tim Burton")) 
+
+t.test(rating~director,data=director_data)
+
+```
+    
+t-stat= 3       
+p-value=0.01       
+      
+From the Test statistics we reject the null hypothesis, as the p-value is less than 5%. In this case it is 1%, so we conclude that the mean IMDB rating for each director is different.  
+
+# Omega Group plc- Pay Discrimination
+
+At the last board meeting of Omega Group Plc., the headquarters of a
+large multinational company, the issue was raised that women were being
+discriminated in the company, in the sense that the salaries were not
+the same for male and female executives. A quick analysis of a sample of
+50 employees (of which 24 men and 26 women) revealed that the average
+salary for men was about 8,700 higher than for women. This seemed like a
+considerable difference, so it was decided that a further analysis of
+the company salaries was warranted.
+    
+The objective is to find out whether there is indeed a significant 
+difference between the salaries of men and women, and whether the 
+difference is due to discrimination or whether it is based on another,
+possibly valid, determining factor.
+
+## Loading the data
+
+```{r load_omega_data}
+omega <- read_csv(here::here("data", "omega.csv"))
+glimpse(omega) # examine the data frame
+skim(omega)
+```
+
+## Relationship Salary - Gender ?
+
+The data frame `omega`  contains the salaries for the sample of 50 executives in the company. 
+    
+We calculate summary statistics on salary by gender and also create and print a dataframe where, for each gender, we show the mean, SD, sample size, the t-critical, the SE, the margin of error, and the low/high endpoints of a 95% confidence interval.
+
+```{r confint_single_valiables}
+# Summary Statistics of salary by gender
+mosaic::favstats (salary ~ gender, data=omega) %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+# Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+# the t-critical value, the standard error, the margin of error, 
+# and the low/high endpoints of a 95% condifence interval
+
+gender_stats <- omega %>%
+  group_by(gender) %>%
+  summarise(mean_salary=mean(salary),
+            sd_salary=sd(salary),
+            count=n(),
+            t_critical=qt(0.975,count-1),
+            se=sd_salary/sqrt(count),
+            margin_of_error=t_critical*se,
+            lower_ci=mean_salary-margin_of_error,
+            upper_ci=mean_salary+margin_of_error) 
+
+gender_stats %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+```
+    
+Looking at the summary statistics above, we can conclude that the mean salary of male employees is larger than the female salary with the means being 73200 \$ (3 sf) and 64500 \$ (3sf) respectively. The medians and quartiles show a similar relationship, ie males having higher earnings than females. Calculating 95% confidence intervals for the two genders we can observe that these two do not overlap and thus we conclude that indeed the mean salary between males and females is significantly different, with males earning more.  
+      
+
+We also run a hypothesis test, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. 
+  
+$H_0: \mu_{male}-\mu_{female}= 0$ vs
+$H_1: \mu_{male}-\mu_{female}\neq 0$
+
+```{r hypothesis_testing}
+# hypothesis testing using t.test() 
+t.test(salary~gender,data=omega)
+
+
+# hypothesis testing using infer package
+hyp_by_gender <- omega %>%
+  # specify variables
+  specify(salary~gender) %>%
+  
+  # assume independence, i.e, there is no difference
+  hypothesize(null = "independence") %>%
+  
+  # generate 1000 reps, of type "permute"
+  generate(reps = 1000, type = "permute") %>%
+  
+  # calculate statistic of difference, namely "diff in means"
+  calculate(stat = "diff in means", order = c("male", "female"))
+
+mean_difference<-  omega %>%
+  specify(salary~gender) %>%
+  calculate(stat="diff in means",
+            order=c("male","female"))
+
+hyp_by_gender %>% 
+  get_p_value(obs_stat = mean_difference , direction = "two_sided") %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+```
+    
+The hypothesis tests, both using the t test and the bootstrap simulation, confirm our previous observation. The p-value is approximately 0 and hence the null hypothesis is rejected and we conclude that the means are significantly different.  There is a difference between average male and female earnings.    
+  
+## Relationship Experience - Gender?
+
+At the board meeting, someone raised the issue that there was indeed a
+substantial difference between male and female salaries, but that this
+was attributable to other reasons such as differences in experience. A
+questionnaire send out to the 50 executives in the sample reveals that
+the average experience of the men is approximately 21 years, whereas the
+women only have about 7 years experience on average (see table below).
+
+```{r experience_stats}
+# Summary Statistics of salary by gender
+favstats (experience ~ gender, data=omega) %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+
+```
+
+We will calculate CIs and see if they overlap:
+
+```{r CI for mean experience between genders}
+experience_stats <- omega %>%
+  group_by(gender) %>%
+  summarise(mean_experience=mean(experience),
+            sd_experience=sd(experience),
+            count=n(),
+            t_critical=qt(0.975,count-1),
+            se=sd_experience/sqrt(count),
+            margin_of_error=t_critical*se,
+            lower_ci=mean_experience-margin_of_error,
+            upper_ci=mean_experience+margin_of_error) 
+
+experience_stats %>%
+  knitr::kable(bootstrap_options = c ("striped","hover","condensed","responsive")) %>%
+  kableExtra::kable_styling()
+```
+The 95% confidence intervals do not overlap. The confidence interval for male experience looks to be significantly higher than female. We can conclude that there is a significant difference of average experience across genders.  
+    
+We perform similar analyses as in the previous section. 
+    
+$H_0: \mu_{male}-\mu_{female}= 0$ vs
+$H_1: \mu_{male}-\mu_{female}\neq 0$
+
+```{r t-test difference in mean experience and gender}
+t.test(experience~gender,data=omega)
+```
+
+The hypothesis test confirms our previous findings. The p-value is approximately 0 so we reject the null hypothesis and conclude that average experience of males and females is significantly different. This conclusion can be used as the reason why males earn more than females in the company which is what we discovered in our previous analysis.   
+
+## Relationship Salary - Experience ?
+
+Someone at the meeting argues that clearly, a more thorough analysis of
+the relationship between salary and experience is required before any
+conclusion can be drawn about whether there is any gender-based salary
+discrimination in the company.  
+  
+Let's analyse the relationship between salary and experience and draw a
+scatterplot to visually inspect the data.  
+
+```{r salary_exp_scatter}
+ggplot(omega, aes(x=experience, y=salary))+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(
+    title="Relationship between salary and experience",
+    x="Experience (in years)",
+    y="Salary"
+  )
+
+```
+
+## Check correlations between the data
+
+We use `GGally:ggpairs()` to create a scatterplot and correlation
+matrix. 
+
+```{r ggpairs for gender experience and salary}
+omega %>% 
+  select(gender, experience, salary) %>% #order variables they will appear in ggpairs()
+  ggpairs(aes(colour=gender, alpha = 0.3))+
+  theme_bw()
+```
+
+From the scatterplot, it is evident that as years of experience increase the salary increases as well. There is a positive correlation between the two variables. This is expected as normally more experienced individual are at higher, managerial positions which are paid more.  
+This increase in pay is more evident for the first 20 years of experience and after that it looks like it levels off. This is also because there aren't many employees with experience more than 25 years, and those must be at the highest earning potential in the company.  
+  
+Now, looking at the gender as well, we earlier concluded that males have more experience than females and as salary increases with experience, it is reasonable that males earn more than females.  
+
+# Challenge 1: Brexit plot
+
+Using data manipulation and visualisation skills, we use the
+Brexit results dataframe and produce the following plot.
+
+```{r brexit_challenge, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "brexit.png"), error = FALSE)
+```
+
+```{r brexit voting image, fig.width=9.63, fig.height=6.28}
+brexit_data <- read_csv(here::here("data","brexit_results.csv"))
+
+party_proportion <- brexit_data %>% 
+  pivot_longer(cols = 2:5,
+               names_to = "party",
+               values_to = "percentage") 
+
+ggplot(party_proportion, aes(x = percentage,
+                        y = leave_share,
+                        group = party,
+                        fill = party,
+                        color = party))+
+  geom_point(shape = 21,
+             alpha = 0.3)+
+  geom_smooth(method = "lm", 
+              formula = y ~ x, 
+              fill = "#A9A9A9")+
+  labs(title = "How political affiliation translated to Brexit Voting",
+       subtitle = "",
+       x = "Party % in the UK 2015 general election",
+       y = "Leave % in the 2016 Brexit Referendum")+
+  theme_bw()+
+  theme(legend.position = "bottom")+
+  scale_shape_manual(values = 21) + 
+  scale_color_manual(values = c("con_2015" = "#0087DC",
+                                "lab_2015" = "#E4003B",
+                                "ld_2015" = "#FAA61A",
+                                "ukip_2015" = "#FFFF00"),
+                     name = "",
+                     labels = c("Conservative", "Labour", "Lib Dems", "UKIP"))+
+  scale_fill_manual(values = c("con_2015" = "#0087DC",
+                                "lab_2015" = "#E4003B",
+                                "ld_2015" = "#FAA61A",
+                                "ukip_2015" = "#FFFF00"),
+                    name = "",
+                    labels = c("Conservative", "Labour", "Lib Dems", "UKIP"))+
+  coord_cartesian(xlim=c(0,80), ylim=c(20,100)) #to get smooth line fully covered by confidence band
+  
+
+```
+
+# Challenge 2: CDC COVID-19 Public Use Data
+
+The [CDC Covid-19 Case Surveillance
+Data](https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf)
+is a case surveillance public use dataset with 12 elements for all
+COVID-19 cases shared with CDC and includes demographics, any exposure
+history, disease severity indicators and outcomes, presence of any
+underlying medical conditions and risk behaviors. We can check the
+variables from below.
+
+```{r covid_data, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "cdc_data.png"), error = FALSE)
+```
+
+There are well over 28 million entries of individual, and we will work
+with SQLlite database, rather than a CSV file. We would
+produce two graphs that show death % rate:
+
+1.  by age group, sex, and whether the patient had co-morbidities or not
+2.  by age group, sex, and whether the patient was admited to Intensive
+    Care Unit (ICU) or not.
+
+```{r covid_challenge, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "covid_death_rate_comorbidities.png"), error = FALSE)
+knitr::include_graphics(here::here("images", "covid_death_rate_icu.png"), error = FALSE)
+```
+
+To do this, we will use dplyr verbs to select,
+filter, group_by the data. Then, we will use dplyr, dbplyr, and ggplot to produce these graphs.
+
+```{r load SQL database}
+cdc_db <- DBI::dbConnect(
+  drv = RSQLite::SQLite(),
+  dbname = "cdc_data.db")
+
+#Check for different tables in SQL database
+DBI::dbListTables(cdc_db)
+
+#Set table up as database object using dplyr
+cdc <- dplyr::tbl(cdc_db, "cdc")
+class(cdc)
+```
+
+```{r Plot sex age co-morbidites and ICU graphs, fig.width=15, fig.height=11}
+#Write a query to SQLite database table
+cdc_query <- cdc %>%
+  select(sex, age_group, death_yn, medcond_yn, icu_yn) %>%
+  filter(sex %in% c("Male","Female"), 
+         age_group != "Missing", 
+         death_yn %in% c("Yes", "No"))
+
+#Use written query to collect data from database
+cdc_prep <- cdc_query %>% 
+  collect()
+
+#Clean and prepare datasets to reproduce the two graphs
+cdc_prep <- cdc_prep %>%
+  mutate (
+    age_group = factor(age_group, 
+                       ordered = TRUE, 
+                       levels = c("0 - 9 Years", "10 - 19 Years", "20 - 29 Years", 
+                                  "30 - 39 Years", "40 - 49 Years", "50 - 59 Years", 
+                                  "60 - 69 Years", "70 - 79 Years", "80+ Years")),
+    medcond_yn = recode(medcond_yn, 
+                        "Yes" = "With co-morbidities", 
+                        "No" = "Without co-morbidities"),
+    icu_yn = recode(icu_yn, 
+                        "Yes" = "ICU Admission", 
+                        "No" = "No ICU Admission"))
+
+#Prepare data to plot age, sex and co-morbidity data
+cdc_comorb <- cdc_prep %>%
+  filter(medcond_yn %in% c("With co-morbidities", "Without co-morbidities")) %>%
+  group_by(age_group, sex, medcond_yn) %>%
+  summarize(
+    count = n(),
+    death_rate = (count(death_yn=="Yes") / count)*100
+  ) %>%
+  mutate(
+    death_rate = round(death_rate, 
+                       digits = 1))
+
+#Plot age, sex, co-morbidity graph
+ggplot(cdc_comorb, aes(x=death_rate, y=age_group))+
+  geom_col(fill="#6a83ad")+
+  facet_grid(medcond_yn~sex)+
+  theme_bw()+
+  labs(
+    title = "Covid death % by age group, sex and presence of co-morbidities",
+    x = "Covid Death Rate (in %)",
+    y = "",
+    caption = "Source: CDC"
+  )+
+  scale_x_continuous(breaks=seq(0,50,10),labels = function(x) paste0(x, ".0%"))+
+  geom_text(aes(label = death_rate), size = 3, hjust = -0.1)+
+  theme(
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    plot.title = element_text(size = 14, hjust = -0.04),
+    plot.caption = element_text(size = 8),
+    strip.text = element_text(size=8)
+  )
+
+
+##Clean dataframe to prepare data to plot age, sex and ICU data
+cdc_icu <- cdc_prep %>%
+  filter(icu_yn %in% c("ICU Admission", "No ICU Admission")) %>%
+  group_by(age_group, sex, icu_yn) %>%
+  summarize(
+    count = n(),
+    death_rate = (count(death_yn=="Yes") / count)*100
+  ) %>%
+  mutate(
+    death_rate = round(death_rate, 
+                       digits = 0))
+
+#Plot age, sex, co-morbidity graph
+ggplot(cdc_icu, aes(x=death_rate, y=age_group))+
+  geom_col(fill="#ff7e47")+
+  facet_grid(icu_yn~sex)+
+  theme_bw()+
+  labs(
+    title = "Covid death % by age group, sex and ICU Admission",
+    x = "Covid Death Rate (in %)",
+    y = "",
+    caption = "Source: CDC"
+    )+
+  scale_x_continuous(breaks=seq(0,83,20),labels = function(x) paste0(x, "%"))+
+  geom_text(aes(label = death_rate), size = 3, hjust = -0.1)+
+  theme(
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    plot.title = element_text(size = 14, hjust = -0.04),
+    plot.caption = element_text(size = 8),
+    strip.text = element_text(size=8)
+  )
+
+```
+
+The graphs point out a few key discoveries:  
+- Older people have a significantly higher risk to die from Covid-19 infections compared to younger people.   
+- Females generally have a lower risk to die from Covid-19 than male individuals.   
+- Co-morbidites increase the risk to die from Covid-19 infections.     
+- As soon as an ICU Admission is required, people have a higher risk to die from Covid-19.  
+
+# Challenge 3: GDP components over time and among countries
+
+At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). There are more about GDP and the different approaches in calculating at the [Wikipedia GDP page](https://en.wikipedia.org/wiki/Gross_domestic_product).
+
+The GDP data we will look at is from the [United Nations' National Accounts Main Aggregates Database](https://unstats.un.org/unsd/snaama/Downloads), which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country's GDP. 
+
+```{r read_GDP_data}
+
+UN_GDP_data  <-  read_excel(here::here("data", "Download-GDPconstant-USD-countries.xls"), # Excel filename
+                sheet="Download-GDPconstant-USD-countr", # Sheet name
+                skip=2) # Number of rows to skip
+
+```
+
+The first thing we will do is to tidy the data, as it is in wide format and we will make it into long, tidy format. We will express all figures in billions rename the indicators into shorter names.  
+
+
+```{r reshape_GDP_data}
+long_UN_Gdp_data<- pivot_longer(UN_GDP_data,cols=4:51,names_to="year",values_to="Spending") #changing it to long format
+
+#Converting
+long_UN_Gdp_data$Spending<-as.numeric(long_UN_Gdp_data$Spending)/(10^9)
+long_UN_Gdp_data$year<-as.numeric(long_UN_Gdp_data$year)
+
+skimr::skim(long_UN_Gdp_data)
+long_UN_Gdp_data$IndicatorName<-factor(long_UN_Gdp_data$IndicatorName)
+summary(long_UN_Gdp_data$IndicatorName)
+
+tidy_GDP_data<-long_UN_Gdp_data %>%
+  mutate(
+    IndicatorName = case_when(
+     IndicatorName == "Agriculture, hunting, forestry, fishing (ISIC A-B)" ~ "AHFF",
+     IndicatorName == "Changes in inventories " ~ "Inventory",
+     IndicatorName == "Construction (ISIC F)" ~ "Construction", 
+     IndicatorName == "Final consumption expenditure" ~ "Consumption",
+     IndicatorName == "Exports of goods and services" ~ "Exports",
+     IndicatorName == "General government final consumption expenditure" ~ "Government_expenditure",
+     IndicatorName == "Gross capital formation" ~ "Gross_Capital_Formation",
+     IndicatorName == "Gross Domestic Product (GDP)" ~ "GDP",
+     IndicatorName == "Gross fixed capital formation (including Acquisitions less disposals of valuables)" ~ "Fixed Capital",
+     IndicatorName == "Household consumption expenditure (including Non-profit institutions serving households)" ~ "Household_expenditure",
+     IndicatorName == "Imports of goods and services" ~ "Imports",
+     IndicatorName == "Manufacturing (ISIC D)" ~ "Manufacturing",
+     IndicatorName == "Mining, Manufacturing, Utilities (ISIC C-E)" ~ "MMU",
+     IndicatorName == "Other Activities (ISIC J-P)" ~ "Other",
+     IndicatorName == "Total Value Added" ~ "Total Value Added",
+     IndicatorName == "Transport, storage and communication (ISIC I)" ~ "Transport",
+     IndicatorName == "Wholesale, retail trade, restaurants and hotels (ISIC G-H)" ~ "Retail"
+    ))
+  
+# Let us compare GDP components for these 3 countries
+country_list <- c("United States","India", "Germany")
+```
+
+First, this is the plot that we will reproduce:
+
+```{r gdp1, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
+```
+
+## GDP Breakdown for Germany, India and United States
+
+```{r GDP 1 Plot, fig.width = 10, fig.height = 6}
+tidy_GDP_data %>%
+  filter(Country %in% country_list,
+         IndicatorName %in% c("Gross_Capital_Formation", 
+                          "Exports",
+                          "Government_expenditure", 
+                          "Household_expenditure", 
+                          "Imports")) %>%
+  mutate(
+    IndicatorName = factor(IndicatorName, 
+                           ordered=TRUE, 
+                           levels=c("Gross_Capital_Formation",
+                                    "Exports",
+                                    "Government_expenditure",
+                                    "Household_expenditure",
+                                    "Imports"),
+                           labels = c("Gross Capital Formation",
+                                      "Exports",
+                                      "Government Expenditure",
+                                      "Household Expenditure",
+                                      "Imports"))
+  ) %>%
+  ggplot(aes(x=year,
+             y=Spending,
+             colour=IndicatorName,
+             group = IndicatorName))+
+  geom_line(size = 1)+
+  facet_wrap(~Country)+
+  labs(title="GDP components over time",
+       x="Year",y="Billion US$",
+       subtitle="In constant 2010 USD",
+       colour="Components of GDP")+
+  theme_bw()+
+  scale_color_manual(values=c("#FF3300", "#92ab59", "#6fd1a0", "#29dae3",
+                             "#CC0099"))+
+  theme(
+    plot.title = element_text(size = 14, face="bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    strip.text = element_text(size = 12),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )
+  
+```
+
+Secondly, given that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in our dataframe, We will calculate it given its components discussed above.
+
+    
+```{r Calclate GDP given its components}
+wide_format_gdp<- tidy_GDP_data %>%
+  pivot_wider(names_from= IndicatorName, values_from= Spending) %>%
+  select(Country,
+         year,
+         Gross_Capital_Formation, 
+         Exports, Imports, 
+         Household_expenditure, 
+         Government_expenditure,GDP) %>%
+  filter(Country %in% country_list) %>%
+  group_by(year) %>%
+  mutate(Net_Exports=Exports-Imports,
+         GDP_calculated=Gross_Capital_Formation+Household_expenditure+
+           Government_expenditure+Net_Exports,
+         percentage_difference=((GDP_calculated-GDP)/GDP)*100)
+
+wide_format_gdp %>%
+  select(Country, year, GDP, GDP_calculated, percentage_difference)
+```
+The self-calculated GDP is generally higher compared to the GDP provided in the dataframe by a few percentage points. However, there are also a few years in which the calculated GDP is lower than the provided GDP. Consequently, we can see that there is some deviation between self-calculated GDPs and provided GDPs.  
+    
+    
+```{r gdp2, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
+```
+
+In the chart above, we can see the percentage of GDP which is spent on each of the four main GDP components, across Germany, India and the US. It is evident that for all three countries the biggest component is that of 'Household expenditure' with about 60% of GDP comprising of it. For India, Household expenditure proportion has significantly decreased over time from about 70% to 55% today. This does not necessarily mean India's Household expenditure is decreasing in absolute value. In turn, there has been a large increase in 'Gross capital formation' from 20% to about 35%. As India is an emerging economy, this is telling us that India has increased investment in capital good unproportionally over the years. The more capital a country possesses the more potential it has to grow in the long term.   
+  
+The distribution across GDP components for Germany and the US is similar. This is no surprise since both countries are more developed than India. One major difference across these two countries is the fact that the US has been experiencing a slight increase in the percentage of GDP in household spending of about 5% and has a trade deficit over the years that is as low as 5%. Whereas for Germany where Household spending seems to slightly decrease, net exports have increased from having a trade deficit a few decades ago to a surplus of about 8%.
+
+Generally, for developed countries in the long term, the proportions of all four components of GDP should see less variability than the proportions for emerging countries. This is exactly what is shown by the comparison between developed countries (Germany, US) and emerging economy (India). 
+
+
+# Details
+
+-   Who did you collaborate with: "Study Group 1: Jiangxia Yu; Marianna Taki; Yuting Wu; Ferdinand Wohlenberg; Massimiliano Ursig; Tanisha Yadav"
+-   Approximately how much time did you spend on this problem set: 7 hours
