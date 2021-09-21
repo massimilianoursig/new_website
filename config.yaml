@@ -76,7 +76,7 @@ params:
       - name: CV
         url: blogs/cv 
     menu: Menu
-#    subtitle: By HTML5 Up
+    subtitle: By Max
     title: Home
   tiles:
     enable: yes
