@@ -14,7 +14,4 @@ slug: cv
 title: CV
 ---
 
-```{r cv1, echo=FALSE, out.width="90%"}
-knitr::include_graphics(here::here("static","img", "CV_ultimo.pdf"), error = FALSE)
-
-```
+Here is my CV [[CV](static/CV_ultimo.pdf)]

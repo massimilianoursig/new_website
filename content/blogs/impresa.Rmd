@@ -19,7 +19,7 @@ The saying “necessity is the mother of invention” rings truer now than ever 
 While now might seem like a counterintuitive time to start a new company, I believe that the next 12-18 months will usher in new, innovative startups to solve today’s challenges. Consider how quickly consumers have readily adopted telemedicine, businesses and individuals alike have relied on tools like Zoom for remote collaboration, and brick-and-mortars have adopted e-commerce platforms to stay in business.
 
 ```{r cv1, echo=FALSE, out.width="90%"}
-knitr::include_graphics("/static/img/blogs/azienda.jpg", error = FALSE)
+knitr::include_graphics("/img/azienda.jpg", error = FALSE)
 
 ```
 
