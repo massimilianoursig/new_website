@@ -88,7 +88,7 @@ params:
       - image: think.jpeg
 #        subtitle: Brief Biography
         title: CV
-        url: blogs/tempus
+        url: blogs/cv
       - image: franki-chamaki-1K6IQsQbizI-unsplash.jpg
 #        subtitle: Start
         title: LBS work 1

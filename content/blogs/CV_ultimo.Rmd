@@ -3,10 +3,7 @@ categories:
 - ""
 - ""
 date: "2017-10-31T22:42:51-05:00"
-description: Nullam et orci eu lorem consequat tincidunt vivamus et sagittis magna
-  sed nunc rhoncus condimentum sem. In efficitur ligula tate urna. Maecenas massa
-  sed magna lacinia magna pellentesque lorem ipsum dolor. Nullam et orci eu lorem
-  consequat tincidunt. Vivamus et sagittis tempus.
+description: See my experiences
 draft: false
 image: think.jpeg
 keywords: ""
@@ -14,4 +11,10 @@ slug: cv
 title: CV
 ---
 
-Here is my CV [[CV](static/CV_ultimo.pdf)]
+Here is my CV.
+Take a look and feel free to contact me through the apposite form that you can find in the Home.
+
+```{r cv1, echo=FALSE, out.width="90%"}
+knitr::include_graphics("/img/CV_ultimo_foto.jpg", error = FALSE)
+
+```

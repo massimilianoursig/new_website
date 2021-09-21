@@ -5,10 +5,10 @@ categories:
 date: "2017-10-31T22:42:51-05:00"
 description: Let's get to know each other!
 draft: false
-image: foto.jpg
+image: robert-v-ruggiero-FLMdXg-6rJo-unsplash.jpg
 keywords: ""
 slug: aliquam
-title: Massimiliano Ursig
+title: Who am I?
 ---
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
@@ -19,7 +19,7 @@ library(janitor)
 ```
 
 
-# Biography
+# Brief Biography
 
 Hello, my name is *Massimiliano* and I will be a MAM2022 student. I'm really excited and I look forward to meet my new classmates!
 
