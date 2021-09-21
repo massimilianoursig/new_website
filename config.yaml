@@ -91,20 +91,20 @@ params:
         url: blogs/cv
       - image: franki-chamaki-1K6IQsQbizI-unsplash.jpg
 #        subtitle: Start
-        title: LBS work 1
+        title: Where Do People Drink The Most Beer, Wine And Spirits?
         url: blogs/max
       - image: hunter-harritt-Ype9sdOPdYc-unsplash.jpg
 #        subtitle: Nisl Sed Aliquam
-        title: LBS work 2
+        title: Climate change and temperature anomalies
         url: blogs/pane
       - image: pierre-chatel-innocenti-pxoZSTdAzeU-unsplash.jpg
         subtitle: Make it simple
-        title: LBS work 3
+        title: Youth Risk Behavior Surveillance
         url: blogs/massi
-      - image: pexels-lukas-590041.jpg
-        subtitle: Autonomus Analysis
-        title: LBS work 4
-        url: blogs/ipsum
+  #    - image: pexels-lukas-590041.jpg
+  #      subtitle: Autonomus Analysis
+  #      title: LBS work 4
+  #      url: blogs/ipsum
   two:
     buttonText: Let's take a look
     enable: yes
