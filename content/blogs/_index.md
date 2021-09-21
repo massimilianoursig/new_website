@@ -6,4 +6,4 @@ slug: blogs
 title: Here you can see al my blogs
 ---
 
-My blogs about technology and lifestyle.
+Let me guide you through different type of analysis
