@@ -8,7 +8,7 @@ params:
   banner:
     buttonText: My works
     subtitle: |-
-      Here you can find some my Data Ananalysis works.
+      Here you can find some of my Data Ananalysis works.
     title: Welcome, this is Massimiliano Ursig's website
   blog: {}
   contact:
