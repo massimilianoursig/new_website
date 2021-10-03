@@ -8,7 +8,7 @@ params:
   banner:
     buttonText: My works
     subtitle: |-
-      Here you can find all my Data Ananalysis works done till this moment. You will see line codes, graphs and a description of the what the plot is trying to tell us.
+      Here you can find some my Data Ananalysis works.
     title: Welcome, this is Massimiliano Ursig's website
   blog: {}
   contact:
@@ -52,9 +52,9 @@ params:
       - icon: fa-github
         label: GitHub
         url: https://www.github.com/massimilianoursig
-#      - icon: fa-linkedin
-#        label: LinkedIn
-#        url: https://www.linkedin.com/in/kostis-christodoulou-285147/
+      - icon: fa-linkedin
+        label: LinkedIn
+        url: https://www.linkedin.com/in/massimilianoursig/
   image: ''
   name: Your name
   navigation:
@@ -69,22 +69,22 @@ params:
         url: '#'
       - name: Blogs
         url: blogs
-      - name: Entrepreneurship
-        url: blogs/impresa
+#      - name: Entrepreneurship
+#        url: blogs/impresa
 #      - name: Elements
 #        url: elements.html
       - name: CV
         url: blogs/cv 
     menu: Menu
-    subtitle: By Max
+    subtitle: By Massimiliano Ursig
     title: Home
   tiles:
     enable: yes
     showcase:
-      - image: robert-v-ruggiero-FLMdXg-6rJo-unsplash.jpg
-        subtitle: Brief Biography
-        title: Who am I?
-        url: blogs/aliquam
+#      - image: robert-v-ruggiero-FLMdXg-6rJo-unsplash.jpg
+#        subtitle: Brief Biography
+#        title: Who am I?
+#        url: blogs/aliquam
       - image: think.jpeg
 #        subtitle: Brief Biography
         title: CV
@@ -98,7 +98,7 @@ params:
         title: Climate change and temperature anomalies
         url: blogs/pane
       - image: pierre-chatel-innocenti-pxoZSTdAzeU-unsplash.jpg
-        subtitle: Make it simple
+#        subtitle: Make it simple
         title: Youth Risk Behavior Surveillance
         url: blogs/massi
   #    - image: pexels-lukas-590041.jpg
